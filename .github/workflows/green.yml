@@ -1,0 +1,36 @@
+name: Auto Green Graph
+
+on:
+  schedule:
+    # This runs every single day at 11:00 PM UTC
+    - cron: '0 23 * * *'
+  workflow_dispatch: # This adds a "Run workflow" button so you can test it manually!
+
+# This tells GitHub to give this specific script permission to write to your repo
+permissions:
+  contents: write
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Make random commits
+        run: |
+          git config --local user.email "yassineharzami19@gmail.com"
+          git config --local user.name "xnoviiq"
+          
+          # Pick a random number of commits between 1 and 5
+          NUM_COMMITS=$(( ( RANDOM % 5 ) + 1 ))
+          echo "Making $NUM_COMMITS commits today..."
+          
+          for i in $(seq 1 $NUM_COMMITS); do
+            echo "$(date): Auto commit $i" >> data.txt
+            git add data.txt
+            git commit -m "daily green"
+          done
+
+      - name: Push changes
+        run: git push origin main
